@@ -1,0 +1,1 @@
+atk1_01.png.png 18 1, atk1_02.png.png 4 68, atk1_03.png.png 11 140, atk1_04.png.png 18 204, atk1_05.png.png 15 268, atk1_06.png.png 14 322, atk1_07.png.png 5 384, atk1_08.png.png 5 448, atk1_09.png.png 14 517, atk1_10.png.png 5 582, atk1_11.png.png 0 651, atk1_12.png.png 0 715.

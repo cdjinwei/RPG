@@ -1,0 +1,37 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "role_1_move_hor",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.05,
+  "sample": 60,
+  "speed": 0.2,
+  "wrapMode": "2",
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "ec573a93-9fff-47f7-bee4-0060ce1a7127"
+            }
+          },
+          {
+            "frame": 0.016666666666666666,
+            "value": {
+              "__uuid__": "974a0ae2-daa1-4503-bbe2-531ee0f1e506"
+            }
+          },
+          {
+            "frame": 0.03333333333333333,
+            "value": {
+              "__uuid__": "fa1672f7-97ba-4acb-aee1-77ff5e49b8e0"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}
