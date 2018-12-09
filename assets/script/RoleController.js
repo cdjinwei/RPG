@@ -15,26 +15,16 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
+        MainCamare: cc.Node,
+        UICamera: cc.Node,
+        ActionPannelPrefab: cc.Prefab,
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    onLoad() {
+        cc.view.enableAntiAlias(true);
+    },
 
     start() {
         this.registerEvent();
@@ -134,11 +124,31 @@ cc.Class({
     registerEvent() {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+        this.node.on(cc.Node.EventType.TOUCH_END, this.onRoleClicked, this);
     },
 
     unregisterEvent() {
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+        this.node.off(cc.Node.EventType.TOUCH_END, this.onRoleClicked, this);
+    },
+
+    onRoleClicked() {
+        //Show Action Pannel
+        console.log(this.node.position);
+        console.log(this.MainCamare.position);
+        // this.MainCamare.position = this.node.position;
+        let action = cc.moveTo(1.3, this.node.position)
+        this.MainCamare.runAction(action.easing(cc.easeQuarticActionInOut()));
+
+        this.addActionPannel(this.node);
+    },
+
+    addActionPannel(node) {
+        let pannel = cc.instantiate(this.ActionPannelPrefab);
+        pannel.parent = node;
+        pannel.x = node.width + 20;
+        pannel.y = 0;
     },
 
     executeCmds() {
@@ -288,7 +298,7 @@ cc.Class({
         }
     },
     update(dt) {
-        this.executeCmds();
+        // this.executeCmds();
     },
 });
 
