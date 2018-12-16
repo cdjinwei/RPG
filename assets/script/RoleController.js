@@ -15,9 +15,6 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        MainCamare: cc.Node,
-        UICamera: cc.Node,
-        ActionPannelPrefab: cc.Prefab,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -114,7 +111,14 @@ cc.Class({
                 cord: cc.v2(0, -1),
             },
         ];
+        this.cmd_list = [];
         // this.executeCmds(cmd_list);
+    },
+
+    addCmd(cmd){
+        while (cmd.length > 0) {
+            this.cmd_list.push(cmd.shift());
+        }
     },
 
     onDestroy() {
@@ -134,28 +138,15 @@ cc.Class({
     },
 
     onRoleClicked() {
-        //Show Action Pannel
-        console.log(this.node.position);
-        console.log(this.MainCamare.position);
-        // this.MainCamare.position = this.node.position;
-        let action = cc.moveTo(1.3, this.node.position)
-        this.MainCamare.runAction(action.easing(cc.easeQuarticActionInOut()));
-
-        this.addActionPannel(this.node);
-    },
-
-    addActionPannel(node) {
-        let pannel = cc.instantiate(this.ActionPannelPrefab);
-        pannel.parent = node;
-        pannel.x = node.width + 20;
-        pannel.y = 0;
+        let ev = new MyCustomEvent.FocusRoleEvent(this);
+        event_mgr.fire(ev);
     },
 
     executeCmds() {
         if (this.cmd_list.length > 0) {
             if (this.state_machine.getStatus().indexOf('Idle') != -1) {
                 //去处数组的第一个命令
-                let step = 30; //每次移动100像素
+                let step = 32; //每次移动32像素
                 let duration = 0.5; //每次移动耗时0.5s
                 let cmd = this.cmd_list.shift();
                 switch (cmd.type) {
@@ -298,7 +289,7 @@ cc.Class({
         }
     },
     update(dt) {
-        // this.executeCmds();
+        this.executeCmds();
     },
 });
 
