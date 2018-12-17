@@ -137,7 +137,8 @@ cc.Class({
         this.node.off(cc.Node.EventType.TOUCH_END, this.onRoleClicked, this);
     },
 
-    onRoleClicked() {
+    onRoleClicked(event) {
+        event.stopPropagation();
         let ev = new MyCustomEvent.FocusRoleEvent(this);
         event_mgr.fire(ev);
     },

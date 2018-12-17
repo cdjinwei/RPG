@@ -30,6 +30,7 @@ cc.Class({
         this._cur_action_role;
         this._action_area_nodes = [];
         this._all_role = [];
+        this._pannel_show_status = true;
         this.initView();
     },
 
@@ -46,13 +47,14 @@ cc.Class({
 
     registerEvent() {
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
-        this.node.on(cc.Node.EventType)
+        this.node.on(cc.Node.EventType.TOUCH_END, this.hideActionPannel, this);
         this._handler = this.handleEvent.bind(this);
         event_mgr.register_event(this._handler);
     },
 
     unregisterEvent() {
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
+        this.node.off(cc.Node.EventType.TOUCH_END, this.hideActionPannel, this);
         event_mgr.unregister_event(this._handler);
     },
 
@@ -63,7 +65,9 @@ cc.Class({
                 this.showActionPannel();
                 this.focusOnPos(this._cur_action_role.node.position);
                 break;
-
+            case EVENT_CODE.EVENT_SEL_MOVE_DIST:
+                this.hideActionPannel();
+                this.createActionArea(this._cur_action_role.node._tile_pos);
             default:
                 break;
         }
@@ -75,13 +79,17 @@ cc.Class({
     },
 
     showActionPannel(){
-        this.pannel_bottom.runAction(cc.moveBy(0.3, new cc.Vec2(0, this.pannel_bottom.height)));
-        this.pannel_side.runAction(cc.moveBy(0.3, new cc.Vec2(-this.pannel_side.width, 0)));
+        if(this._pannel_show_status) return;
+        this._pannel_show_status = true;
+        this.pannel_bottom.runAction(cc.moveBy(0.2, new cc.Vec2(0, this.pannel_bottom.height)));
+        this.pannel_side.runAction(cc.moveBy(0.2, new cc.Vec2(-this.pannel_side.width, 0)));
     },
 
     hideActionPannel(){
-        this.pannel_bottom.runAction(cc.moveBy(0.3, new cc.Vec2(0, -this.pannel_bottom.height)));
-        this.pannel_side.runAction(cc.moveBy(0.3, new cc.Vec2(this.pannel_side.width, 0)));
+        if(!this._pannel_show_status) return;
+        this._pannel_show_status = false;
+        this.pannel_bottom.runAction(cc.moveBy(0.2, new cc.Vec2(0, -this.pannel_bottom.height)));
+        this.pannel_side.runAction(cc.moveBy(0.2, new cc.Vec2(this.pannel_side.width, 0)));
     },
 
     focusOnPos(tilePos){
@@ -95,6 +103,7 @@ cc.Class({
         let new_role = cc.instantiate(this.role_prefab);
         //initial role
         new_role.parent = this.node;
+        new_role._tile_pos = pos;
         this._all_role.push(new_role);
 
         new_role.position = pixelPos;
@@ -110,11 +119,6 @@ cc.Class({
     },
 
     getPixPos(posInTile) {
-        // let mapSize = this.node.getContentSize();
-        // let tileSize = this._tiledMap.getTileSize();
-
-        // let x = (posInTile.x + 0.5) * tileSize.width;
-        // let y = mapSize.height - ((posInTile.y + 1) * tileSize.height);
         let posInPixel = this._map_floor.getPositionAt(posInTile);
         posInPixel.x -= this.node.width / 2 - this._tiledMap.getTileSize().width / 2;
         posInPixel.y -= this.node.height / 2;
@@ -140,10 +144,10 @@ cc.Class({
                     let node = cc.instantiate(this.template);
                     this._action_area_nodes.push(node);
                     node.position = this.getPixPos(cc.v2(x, y));
+                    node._tile_pos = cc.v2(x, y);
                     node.parent = this.node;
                     node.on(cc.Node.EventType.TOUCH_END, () => {
-                        let pos = new cc.Vec2(x, y);
-                        this.tryMoveRole(pos);
+                        this.tryMoveRole(node._tile_pos);
                     });
                 }
             }
@@ -161,7 +165,7 @@ cc.Class({
     movePlayer(role, disPos){
         this.cleanActionArea();
         let path = [];
-        let curPos = this.getTilePos(role.position);
+        let curPos = role.node._tile_pos;
         while (!curPos.equals(disPos)){
             if(curPos.x > disPos.x){
                 curPos.x--;

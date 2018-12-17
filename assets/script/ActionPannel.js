@@ -42,7 +42,8 @@ cc.Class({
     },
 
     Move(){
-
+        let ev = new MyCustomEvent.ShowMoveArea();
+        window.event_mgr.fire(ev);
     },
 
     Wait(){
