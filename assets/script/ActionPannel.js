@@ -38,7 +38,8 @@ cc.Class({
     },
 
     Attack(){
-
+        let ev = new MyCustomEvent.ShowAtkArea();
+        window.event_mgr.fire(ev);
     },
 
     Move(){

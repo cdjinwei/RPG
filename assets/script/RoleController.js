@@ -14,8 +14,7 @@ import {
 cc.Class({
     extends: cc.Component,
 
-    properties: {
-    },
+    properties: {},
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -44,20 +43,36 @@ cc.Class({
                 to: 'MoveDown'
             },
             IdleLeft: {
-                from: ['MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
+                from: ['AtkDown', 'AtkLeft', 'AtkRight', 'AtkUp', 'MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
                 to: 'IdleLeft'
             },
             IdleRight: {
-                from: ['MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
+                from: ['AtkDown', 'AtkLeft', 'AtkRight', 'AtkUp', 'MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
                 to: 'IdleRight'
             },
             IdleUp: {
-                from: ['MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
+                from: ['AtkDown', 'AtkLeft', 'AtkRight', 'AtkUp', 'MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
                 to: 'IdleUp'
             },
             IdleDown: {
-                from: ['MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
+                from: ['AtkDown', 'AtkLeft', 'AtkRight', 'AtkUp', 'MoveUp', 'MoveDown', 'MoveRight', "MoveLeft"],
                 to: 'IdleDown'
+            },
+            AtkDown: {
+                from: ['IdleLeft', 'IdleRight', 'IdleUp', 'IdleDown'],
+                to: 'AtkDown'
+            },
+            AtkLeft: {
+                from: ['IdleLeft', 'IdleRight', 'IdleUp', 'IdleDown'],
+                to: 'AtkLeft'
+            },
+            AtkRight: {
+                from: ['IdleLeft', 'IdleRight', 'IdleUp', 'IdleDown'],
+                to: 'AtkRight'
+            },
+            AtkUp: {
+                from: ['IdleLeft', 'IdleRight', 'IdleUp', 'IdleDown'],
+                to: 'AtkUp'
             }
         }
         this.state_machine = new StateMachine(this, map, 'IdleDown');
@@ -73,6 +88,11 @@ cc.Class({
                 status: 'MoveUp',
                 finish_status: 'IdleUp',
                 cord: cc.v2(0, 1),
+            },
+            {
+                type: 'fight',
+                status: 'AtkUp',
+                finish_status: 'IdleUp',
             },
             {
                 type: 'move',
@@ -115,7 +135,7 @@ cc.Class({
         // this.executeCmds(cmd_list);
     },
 
-    addCmd(cmd){
+    addCmd(cmd) {
         while (cmd.length > 0) {
             this.cmd_list.push(cmd.shift());
         }
@@ -161,7 +181,16 @@ cc.Class({
                         );
                         this.node.runAction(action);
                         break;
-
+                    case 'fight':
+                        this.state_machine.transform(cmd.status);
+                        action = cc.sequence(
+                            cc.delayTime(duration),
+                            cc.callFunc(() => {
+                                this.state_machine.transform(cmd.finish_status);
+                            })
+                        );
+                        this.node.runAction(action);
+                        break;
                     default:
                         break;
                 }
@@ -266,24 +295,60 @@ cc.Class({
                 console.log('player onIdleDownLeave');
                 break;
             case 'onIdleRightEnter':
-                // this.animation.play('role_1_move_hor');
-                this.animation.stop();
+                this.animation.play('role_1_move_down');
                 console.log('player onIdleRightEnter');
                 break;
             case 'onIdleLeftEnter':
-                // this.animation.play('role_1_move_hor');
-                this.animation.stop();
+                //play role idle animation
+                this.animation.play('role_1_move_down');
                 console.log('player onIdleLeftEnter');
                 break;
             case 'onIdleUpEnter':
-                // this.animation.play('role_1_move_up');
-                this.animation.stop();
+                //play role idle animation
+                this.animation.play('role_1_move_down');
                 console.log('player onIdleUpEnter');
                 break;
             case 'onIdleDownEnter':
+                //play role idle animation
+                this.animation.play('role_1_move_down');
+                console.log('player onIdleDownEnter');
+                break;
+            case 'onAtkDownEnter':
+                //play role idle animation
+                this.animation.play('role_1_atk_down');
+                console.log('player onAtkDownEnter');
+                break;
+            case 'onAtkUpEnter':
+                this.animation.play('role_1_atk_up');
+                console.log('player onIdleDownEnter');
+                break;
+            case 'onAtkLeftEnter':
+                this.animation.play('role_1_atk_hor');
+                console.log('player onIdleDownEnter');
+                break;
+            case 'onAtkRightEnter':
+                this.animation.play('role_1_atk_hor');
+                console.log('player onIdleDownEnter');
+                break;
+            case 'onAtkRightLeave':
                 // this.animation.play('role_1_move_down');
                 this.animation.stop();
-                console.log('player onIdleDownEnter');
+                console.log('player onAtkRightLeave');
+                break;
+            case 'onAtkLeftLeave':
+                // this.animation.play('role_1_move_down');
+                this.animation.stop();
+                console.log('player onAtkLeftLeave');
+                break;
+            case 'onAtkUpLeave':
+                // this.animation.play('role_1_move_down');
+                this.animation.stop();
+                console.log('player onAtkUpLeave');
+                break;
+            case 'onAtkDownLeave':
+                // this.animation.play('role_1_move_down');
+                this.animation.stop();
+                console.log('player onAtkDownLeave');
                 break;
             default:
                 break;

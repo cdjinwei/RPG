@@ -39,6 +39,7 @@ cc.Class({
 
 
         this.addRole(new cc.Vec2(2,2),{});
+        this.addRole(new cc.Vec2(2, 6), {});
     },
 
     onDestroy() {
@@ -67,7 +68,20 @@ cc.Class({
                 break;
             case EVENT_CODE.EVENT_SEL_MOVE_DIST:
                 this.hideActionPannel();
-                this.createActionArea(this._cur_action_role.node._tile_pos);
+                this.createActionArea(this._cur_action_role.node._tile_pos, 2, pos => {
+                    this.tryMoveRole(pos);
+                });
+                break;
+            case EVENT_CODE.EVENT_SEL_ATK_TARGET:
+                this.hideActionPannel();
+                this.createActionArea(this._cur_action_role.node._tile_pos, 1, pos => {
+                    this._cur_action_role.getComponent('RoleController').addCmd([{
+                        type: 'fight',
+                        status: 'AtkUp',
+                        finish_status: 'IdleDown',
+                    }]);
+                });
+                break;
             default:
                 break;
         }
@@ -133,10 +147,9 @@ cc.Class({
         this._action_area_nodes = [];
     },
 
-    createActionArea(startPos) {
+    createActionArea(startPos, max_dis, callback) {
         if(this._action_area_nodes.length > 0) return;
         //以startPos为中心,创建玩家可以移动的区域
-        let max_dis = 2;
         for (let x = startPos.x - max_dis; x <= startPos.x + max_dis; x++) {
             for (let y = startPos.y - max_dis; y <= startPos.y + max_dis; y++) {
                 if(x < 0 || x > 9 || y < 0 || y > 9) continue;
@@ -147,7 +160,7 @@ cc.Class({
                     node._tile_pos = cc.v2(x, y);
                     node.parent = this.node;
                     node.on(cc.Node.EventType.TOUCH_END, () => {
-                        this.tryMoveRole(node._tile_pos);
+                        callback(node._tile_pos);
                     });
                 }
             }

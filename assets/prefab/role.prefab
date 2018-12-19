@@ -17,7 +17,7 @@
     "_parent": null,
     "_children": [],
     "_active": true,
-    "_level": 3,
+    "_level": 1,
     "_components": [
       {
         "__id__": 2
@@ -145,11 +145,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "MainCamare": null,
-    "UICamera": null,
-    "ActionPannelPrefab": {
-      "__uuid__": "8bbeee7a-a132-426b-8ab8-bd1405e4717c"
-    },
     "_id": ""
   },
   {
@@ -158,7 +153,7 @@
       "__id__": 1
     },
     "asset": {
-      "__id__": 0
+      "__uuid__": "6bd8432b-0194-471e-a1b4-b37204b07597"
     },
     "fileId": "46GInWuWNBYZOOFwL+pUMz",
     "sync": false
